@@ -49,11 +49,11 @@ void SetMotor(float leftSpeed, float rightSpeed) {
   // Set the right motor in1/in2 to forward or backwards.
   if ((rightSpeed > 0 && rightMultiplier == 1) || (rightSpeed < 0 && rightMultiplier == -1)) {
     digitalWrite(r_in1, 1);
-    digitalWrite(r_in1, 0);
+    digitalWrite(r_in2, 0);
   } 
   else {
     digitalWrite(r_in1, 0);
-    digitalWrite(r_in1, 1);
+    digitalWrite(r_in2, 1);
   }
   // Set the speed of the right motor.
   analogWrite(r_enable, abs(rightSpeed * 255));
@@ -62,11 +62,11 @@ void SetMotor(float leftSpeed, float rightSpeed) {
   // Set the left motor in1/in2 to forward or backwards.
   if ((leftSpeed > 0 && leftMultiplier == 1) || (leftSpeed < 0 && leftMultiplier == -1)) {
     digitalWrite(l_in1, 1);
-    digitalWrite(l_in1, 0);
+    digitalWrite(l_in2, 0);
   } 
   else {
     digitalWrite(l_in1, 0);
-    digitalWrite(l_in1, 1);
+    digitalWrite(l_in2, 1);
   }
   // Set the speed of the right motor.
   analogWrite(l_enable, abs(leftSpeed * 255));
