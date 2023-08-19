@@ -1,4 +1,4 @@
-//# include "Arduino.h"
+# include "Arduino.h"
 
 class Maze;
 class Robot;
@@ -12,7 +12,7 @@ void initMaze(Maze maze);
 void PerformNextTurn(Direction currentDirection, Maze maze, Robot robot);
 void RemoveColourWalls(Colour toRemove);
 void SetMazeStartAndEnd(int startX, int startY, int endX, int endY, Maze maze);
-void NavigateMaze(int startX, int startY, int endX, int endY, bool reset, Maze maze, Robot robot);
+void NavigateMaze(int startX, int startY, int endX, int endY, bool reset, Bool setRobotToStart);
 void TurnAnticlockwise(Robot robot);
 void TurnClockwise(Robot robot);
 bool ScanForWall();
