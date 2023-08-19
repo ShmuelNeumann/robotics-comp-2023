@@ -7,6 +7,7 @@ using namespace std;
 enum Direction {UP, DOWN, RIGHT, LEFT};
 enum Colour {UNKNOWN, BW, RED, OTHER};
 enum WallType{MAYBEWALL, NOWALL, YESWALL};
+queue<string> cur_dir;
 
 class Cell {
     public:
@@ -93,10 +94,21 @@ void initMaze() {
 };
 
 void PerformNextTurn(Direction currentDirection) {
-    cout << "performing Next turn\n";
+    cout << "-------------------------------\n";
+
+    cout << "Performing Next turn:\n";
+
     UpdateDistances();
 
     int thisDist = maze.cellMap[robot.x][robot.y].distance;
+
+    int temp = GetCell(maze.cellMap[robot.x][robot.y], currentDirection).distance;
+
+    cout << "Current location is: x = " << robot.x << ", y = " << robot.y << "\n";
+
+    cout << "Currently Facing " << cur_dir.front() << "\n";
+
+    cout << "distance of target: " << temp << "\n";
 
     if (GetWall(robot.x, robot.y, robot.direc) != YESWALL && GetCell(maze.cellMap[robot.x][robot.y], currentDirection).distance == thisDist-1) {
         cout << "Decided to move forward\n";
@@ -111,7 +123,7 @@ void PerformNextTurn(Direction currentDirection) {
         cout << "Decided to turn anticlockwise\n";
 
         robot.direc = GetAnticlockwise(currentDirection);
-        TurnClockwise();
+        TurnAnticlockwise();
     }
     else {
         cout << "Decided to turn clockwise twice\n";
@@ -122,6 +134,7 @@ void PerformNextTurn(Direction currentDirection) {
         TurnClockwise();
 
     }
+
 }
 
 void RemoveColourWalls(Colour toRemove) {
@@ -150,7 +163,7 @@ void NavigateMaze(int startX, int startY, int endX, int endY, bool reset) {
     }
     SetMazeStartAndEnd(startX, startY, endX, endY);
 
-    while(robot.x != maze.endCell.x && robot.y != maze.endCell.y) {
+    while(robot.x != maze.endCell.x || robot.y != maze.endCell.y) {
 
         maze.cellMap[robot.x][robot.y].colour = ReadColour();
 
@@ -170,12 +183,15 @@ void NavigateMaze(int startX, int startY, int endX, int endY, bool reset) {
     }
 }
 
-
 void TurnAnticlockwise() {
-    cout << "turning anticlockwise";
+    cur_dir.push(cur_dir.front()); cur_dir.pop(); cur_dir.push(cur_dir.front()); cur_dir.pop(); cur_dir.push(cur_dir.front()); cur_dir.pop();
+    cout << "Turning anticlockwise\n";
+    cout << "Now Facing " << cur_dir.front() << "\n";
 }
 void TurnClockwise() {
-    cout << "turning anticlockwise";
+    cur_dir.push(cur_dir.front()); cur_dir.pop();
+    cout << "Turning clockwise\n";
+    cout << "Now Facing " << cur_dir.front() << "\n";
 }
 
 bool ScanForWall() {
@@ -195,7 +211,10 @@ bool ScanForWall() {
 }
 
 void MoveForward() {
-    cout << "current location is: x = " << robot.x << ", y = " << robot.y << "\n";
+
+    //cout << "current location is: x = " << robot.x << ", y = " << robot.y << "\n";
+    cout << "Actually moving forward\n";
+
 }
 
 
@@ -243,8 +262,8 @@ void UpdateCellDist(int distance, int x, int y) {
 
 // Does not account for running off array edges
 Cell GetCell(Cell cell, Direction direction) {
-    if (direction == UP) {return maze.cellMap[cell.x][cell.y + 1];}
-    if (direction == DOWN) {return maze.cellMap[cell.x][cell.y - 1];}
+    if (direction == UP) {return maze.cellMap[cell.x][cell.y - 1];}
+    if (direction == DOWN) {return maze.cellMap[cell.x][cell.y + 1];}
     if (direction == RIGHT) {return maze.cellMap[cell.x + 1][cell.y];}
     else {return maze.cellMap[cell.x - 1][cell.y];}
 }
@@ -305,6 +324,7 @@ WallType GetWall(int x, int y, Direction direction) {
 
 int main(int argc, char const *argv[])
 {
+    cur_dir.push("Up"); cur_dir.push("Right"); cur_dir.push("Down"); cur_dir.push("Left");
     NavigateMaze(5,5,1,1,true);
 }
 
