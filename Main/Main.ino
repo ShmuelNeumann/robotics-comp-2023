@@ -2,15 +2,15 @@
 #include "MazeNavigator.h"
 
 
-// This is a sample of the motor controller.
+// This is a sample of the motor contr  oller.
 
 
 void setup() {
     Serial.begin(9600);
 
     // Init motor pins:
-    SetLeftPins(3, 7, 8);
-    SetRightPins(5, 11, 10);
+    SetLeftPins(3, 6, 7);
+    SetRightPins(5, 8, 9);
 
     SetMotor(0, 0);
 
@@ -29,5 +29,5 @@ void loop() {
     // blink the LED
 
 
-    delay(10000)
+    delay(10000);
 }

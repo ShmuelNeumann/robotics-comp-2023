@@ -1,17 +1,26 @@
-#include <queue>
-#include <iostream>
-#include <array>
+// #include <queue>
+// #include <iostream>
+// #include <array>
 
 
-// ultrasonic setup
-//#include <NewPing.h> 
-//#define TRIGGER_PIN  2
-//#define ECHO_PIN     3
-//#define MAX_DISTANCE 200
-//NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+//ultrasonic setup
+#include <NewPing.h> 
+#define FORWARD_TRIGGER_PIN A4
+#define FORWARD_ECHO_PIN A5
+#define MAX_DISTANCE 200
+NewPing forwardSonar(FORWARD_TRIGGER_PIN, FORWARD_ECHO_PIN, MAX_DISTANCE);
+
+#define RIGHT_TRIGGER_PIN  A3
+#define RIGHT_ECHO_PIN     A2
+NewPing rightSonar(RIGHT_TRIGGER_PIN, RIGHT_ECHO_PIN, MAX_DISTANCE);
+
+#define LEFT_TRIGGER_PIN  2
+#define LEFT_ECHO_PIN     4
+NewPing leftSonar(LEFT_TRIGGER_PIN, LEFT_ECHO_PIN, MAX_DISTANCE);
+
 
 //motor setup
-//#include "MotorControl.h"
+#include "MotorControl.h"
 
 
 using namespace std;
@@ -19,7 +28,7 @@ using namespace std;
 enum Direction {UP, DOWN, RIGHT, LEFT};
 enum Colour {UNKNOWN, BW, RED, OTHER};
 enum WallType{MAYBEWALL, NOWALL, YESWALL};
-queue<string> cur_dir;
+//queue<string> cur_dir;
 
 class Cell {
     public:
@@ -106,9 +115,9 @@ void initMaze() {
 };
 
 void PerformNextTurn(Direction currentDirection) {
-    cout << "-------------------------------\n";
+    //cout << "-------------------------------\n";
 
-    cout << "Performing Next turn:\n";
+    //cout << "Performing Next turn:\n";
 
     UpdateDistances();
 
@@ -116,29 +125,29 @@ void PerformNextTurn(Direction currentDirection) {
 
     int temp = GetCell(maze.cellMap[robot.x][robot.y], currentDirection).distance;
 
-    cout << "Current location is: x = " << robot.x << ", y = " << robot.y << "\n";
+    //cout << "Current location is: x = " << robot.x << ", y = " << robot.y << "\n";
 
-    cout << "Currently Facing " << cur_dir.front() << "\n";
+    //cout << "Currently Facing " << cur_dir.front() << "\n";
 
-    cout << "distance of target: " << temp << "\n";
+    //cout << "distance of target: " << temp << "\n";
 
     if (GetWall(robot.x, robot.y, robot.direc) != YESWALL && GetCell(maze.cellMap[robot.x][robot.y], currentDirection).distance == thisDist-1) {
-        cout << "Decided to move forward\n";
+        //cout << "Decided to move forward\n";
         return;
     }
     else if (GetWall(robot.x, robot.y, GetClockwise(robot.direc)) != YESWALL && GetCell(maze.cellMap[robot.x][robot.y], GetClockwise(currentDirection)).distance == thisDist-1) {
-        cout << "Decided to turn clockwise\n";
+        //cout << "Decided to turn clockwise\n";
         robot.direc = GetClockwise(currentDirection);
         TurnClockwise();
     }
     else if (GetWall(robot.x, robot.y, GetAnticlockwise(robot.direc)) != YESWALL && GetCell(maze.cellMap[robot.x][robot.y], GetAnticlockwise(currentDirection)).distance == thisDist-1) {
-        cout << "Decided to turn anticlockwise\n";
+        //cout << "Decided to turn anticlockwise\n";
 
         robot.direc = GetAnticlockwise(currentDirection);
         TurnAnticlockwise();
     }
     else {
-        cout << "Decided to turn clockwise twice\n";
+        //cout << "Decided to turn clockwise twice\n";
 
         robot.direc = GetClockwise(GetClockwise(currentDirection));
 
@@ -182,6 +191,21 @@ void SetMazeStartAndEnd(int startX, int startY, int endX, int endY) {
 
 }
 
+void Scan() {
+
+    if (rightSonar.ping_cm() < 20) {
+        SetWall(GetClockwise(robot.direc), robot.x, robot.y);
+    }
+    if (leftSonar.ping_cm() < 20) {
+        SetWall(GetAnticlockwise(robot.direc), robot.x, robot.y);
+    }
+    if (forwardSonar.ping_cm() < 20) {
+        SetWall(robot.direc, robot.x, robot.y);
+
+    }
+
+}
+
 
 void NavigateMaze(int startX, int startY, int endX, int endY, bool reset, bool setRobotToStart) {
     if (reset) {
@@ -197,46 +221,47 @@ void NavigateMaze(int startX, int startY, int endX, int endY, bool reset, bool s
     while(robot.x != maze.endCell.x || robot.y != maze.endCell.y) {
 
         maze.cellMap[robot.x][robot.y].colour = ReadColour();
-
+    
+        Scan();
         PerformNextTurn(robot.direc);
         
         WallType wall = GetWall(robot.x, robot.y, robot.direc);
 
-        if (wall == NOWALL || ScanForWall() == 0) {
-            robot.x = GetCell(maze.cellMap[robot.x][robot.y], robot.direc).x;
-            robot.y = GetCell(maze.cellMap[robot.x][robot.y], robot.direc).y;
-            MoveForward();
 
-        }
-        else {
-            SetWall(robot.direc, robot.x, robot.y);
-        }
+        robot.x = GetCell(maze.cellMap[robot.x][robot.y], robot.direc).x;
+        robot.y = GetCell(maze.cellMap[robot.x][robot.y], robot.direc).y;
+        MoveForward();
+
+
     }
 }
 
 void TurnAnticlockwise() {
     // something like this, needs calibration
-    // SetMotor(-0.5, 0.5);
-    // delay(100)
-    // SetMotor(0, 0);
-    // delay(10)
+    SetMotor(-0.5, 0.5);
+    delay(500);
+    SetMotor(0, 0);
+    delay(10);
 
 
-    cur_dir.push(cur_dir.front()); cur_dir.pop(); cur_dir.push(cur_dir.front()); cur_dir.pop(); cur_dir.push(cur_dir.front()); cur_dir.pop();
-    cout << "Turning anticlockwise\n";
-    cout << "Now Facing " << cur_dir.front() << "\n";
+    //cur_dir.push(cur_dir.front()); cur_dir.pop(); cur_dir.push(cur_dir.front()); cur_dir.pop(); cur_dir.push(cur_dir.front()); cur_dir.pop();
+    //cout << "Turning anticlockwise\n";
+    //cout << "Now Facing " << cur_dir.front() << "\n";
 }
 void TurnClockwise() {
     // something like this, needs calibration
-    // SetMotor(0.5, -0.5);
-    // delay(100)
-    // SetMotor(0, 0);
-    // delay(10)
+    SetMotor(0.5, -0.5);
+    delay(500);
+    SetMotor(0, 0);
+    delay(10);
 
-    cur_dir.push(cur_dir.front()); cur_dir.pop();
-    cout << "Turning clockwise\n";
-    cout << "Now Facing " << cur_dir.front() << "\n";
+    //  cur_dir.push(cur_dir.front()); cur_dir.pop();
+    //cout << "Turning clockwise\n";
+    //cout << "Now Facing " << cur_dir.front() << "\n";
 }
+
+
+
 
 bool ScanForWall() {
 
@@ -244,31 +269,31 @@ bool ScanForWall() {
     // return distance < 30;
         
 
-    cout << "Is there a wall? (y/n)";
-    string input;
-    cin >> input;
-    if (input == "y") {
-        cout << "There is a wall\n";
-        return true;
+    // << "Is there a wall? (y/n)";
+    // string input;
+    // cin >> input;
+    // if (input == "y") {
+    //     //cout << "There is a wall\n";
+    //     return true;
 
-    }
-    else {
-        cout << "There is not a wall\n";
-        return false;
-    }
+    // }
+    // else {
+    //     //cout << "There is not a wall\n";
+    //     return false;
+    // }
     
 }
 
 void MoveForward() {
     // something like this, needs calibration
-    // SetMotor(1, 1);
-    // delay(100)
-    // SetMotor(0, 0);
-    // delay(10)
+    SetMotor(1, 1);
+    delay(500);
+    SetMotor(0, 0);
+    delay(10);
 
 
     //cout << "current location is: x = " << robot.x << ", y = " << robot.y << "\n";
-    cout << "Actually moving forward\n";
+    //cout << "Actually moving forward\n";
 
 }
 
@@ -288,12 +313,12 @@ void UpdateDistances () {
     // call the recursive flood fill function
     UpdateCellDist(0, maze.endCell.x, maze.endCell.y);
 
-    for (int i = 0; i < 6; i++) {
-        for (int j = 0; j < 6; j++) {
-            cout << maze.cellMap[i][j].distance << " ";
-        }
-        cout << "\n";
-    }
+    // for (int i = 0; i < 6; i++) {
+    //     for (int j = 0; j < 6; j++) {
+    //         cout << maze.cellMap[i][j].distance << " ";
+    //     }
+    //     cout << "\n";
+    // }
 
 }
 
@@ -377,11 +402,11 @@ WallType GetWall(int x, int y, Direction direction) {
 }
 
 
-int main(int argc, char const *argv[])
-{
-    cur_dir.push("Up"); cur_dir.push("Right"); cur_dir.push("Down"); cur_dir.push("Left");
-    NavigateMaze(5,5,1,1,true, true);
-}
+// int main(int argc, char const *argv[])
+// {
+//     //cur_dir.push("Up"); cur_dir.push("Right"); cur_dir.push("Down"); cur_dir.push("Left");
+//     NavigateMaze(5,5,1,1,true, true);
+// }
 
 
 

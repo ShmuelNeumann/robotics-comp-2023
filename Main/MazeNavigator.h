@@ -4,18 +4,19 @@ class Maze;
 class Robot;
 class Cell;
 
-enum Direction;
-enum Colour;
-enum WallType;
+enum Direction {UP, DOWN, RIGHT, LEFT};
+enum Colour {UNKNOWN, BW, RED, OTHER};
+enum WallType{MAYBEWALL, NOWALL, YESWALL};
 
 void initMaze(Maze maze);
 void PerformNextTurn(Direction currentDirection, Maze maze, Robot robot);
 void RemoveColourWalls(Colour toRemove);
 void SetMazeStartAndEnd(int startX, int startY, int endX, int endY, Maze maze);
-void NavigateMaze(int startX, int startY, int endX, int endY, bool reset, Bool setRobotToStart);
+void NavigateMaze(int startX, int startY, int endX, int endY, bool reset, bool setRobotToStart);
 void TurnAnticlockwise(Robot robot);
 void TurnClockwise(Robot robot);
 bool ScanForWall();
+void Scan();
 void MoveForward(Robot robot);
 Colour ReadColour();
 void UpdateDistances (Maze maze);
