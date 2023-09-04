@@ -86,6 +86,7 @@ Direction GetClockwise(Direction direction);
 Direction GetAnticlockwise(Direction direction);
 void SetWall(Direction direction, int x, int y);
 WallType GetWall(int x, int y, Direction direction);
+Colour get_colour();
 
 
 // globals
