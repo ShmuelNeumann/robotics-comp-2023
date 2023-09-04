@@ -220,16 +220,16 @@ void NavigateMaze(int startX, int startY, int endX, int endY, bool reset, bool s
 
     while(robot.x != maze.endCell.x || robot.y != maze.endCell.y) {
 
-        maze.cellMap[robot.x][robot.y].colour = ReadColour();
+        maze.cellMap[robot.x][robot.y].colour = get_colour();
     
         Scan();
         PerformNextTurn(robot.direc);
         
-        WallType wall = GetWall(robot.x, robot.y, robot.direc);
+        int x = GetCell(maze.cellMap[robot.x][robot.y], robot.direc).x;
+        int y = GetCell(maze.cellMap[robot.x][robot.y], robot.direc).y;
 
-
-        robot.x = GetCell(maze.cellMap[robot.x][robot.y], robot.direc).x;
-        robot.y = GetCell(maze.cellMap[robot.x][robot.y], robot.direc).y;
+        robot.x = x;
+        robot.y = y;
         MoveForward();
 
 
@@ -258,30 +258,6 @@ void TurnClockwise() {
     //  cur_dir.push(cur_dir.front()); cur_dir.pop();
     //cout << "Turning clockwise\n";
     //cout << "Now Facing " << cur_dir.front() << "\n";
-}
-
-
-
-
-bool ScanForWall() {
-
-    // distance = sonar.ping_cm();
-    // return distance < 30;
-        
-
-    // << "Is there a wall? (y/n)";
-    // string input;
-    // cin >> input;
-    // if (input == "y") {
-    //     //cout << "There is a wall\n";
-    //     return true;
-
-    // }
-    // else {
-    //     //cout << "There is not a wall\n";
-    //     return false;
-    // }
-    
 }
 
 void MoveForward() {
@@ -400,6 +376,68 @@ WallType GetWall(int x, int y, Direction direction) {
     if (direction == RIGHT) {return maze.cellMap[x][y].rightWall;}
     else{return maze.cellMap[x][y].leftWall;}
 }
+
+
+Colour get_colour() {
+  // Setting red filtered photodiodes to be read
+  digitalWrite(2,LOW);
+  digitalWrite(3,LOW);
+  
+  // Reading the output frequency
+  int red = pulseIn(2, LOW);
+
+  delay(100);
+
+  // Setting Green filtered photodiodes to be read
+  digitalWrite(2,HIGH);
+  digitalWrite(3,HIGH);
+
+  // Reading the output frequency
+  int green = pulseIn(2, LOW);
+
+  delay(100);
+
+  // Setting Blue filtered photodiodes to be read
+  digitalWrite(2,LOW);
+  digitalWrite(3,HIGH);
+
+  // Reading the output frequency
+  int blue = pulseIn(10, LOW);
+
+  delay(100);
+
+  Serial.print("R: "); 
+  Serial.print(red); 
+  Serial.print("G: "); 
+  Serial.print(green); 
+  Serial.print("B: "); 
+  Serial.print(blue); 
+  Serial.println("");
+
+  // =============================== convert to colour ===============================
+  if (red >= 40 && red <= 85 && green >= 150 && green <=210 && blue >= 105 && blue <= 150) {
+    return RED;
+  }
+  else if (red >= 95 && red <= 130 && green >= 150 && green <=210 && blue >= 80 && blue <= 140) {
+    return OTHER;
+  }
+  else if (red >= 120 && red <= 190 && green >= 100 && green <=210 && blue >= 60 && blue <= 120) {
+    return OTHER;
+  }
+  else if (red >= 65 && red <= 105 && green >= 60 && green <=110 && blue >= 90 && blue <= 140) {
+    return OTHER;
+  }
+  else if (red >= 40 && red <= 80 && green >= 65 && green <=120 && blue >= 95 && blue <= 150) {
+    return OTHER;
+  }
+  else if (red >= 25 && red <= 70 && green >= 30 && green <=80 && blue >= 25 && blue <= 65) {
+    return BW;
+  }
+  else {
+    return BW;
+  }
+}
+
 
 
 // int main(int argc, char const *argv[])
