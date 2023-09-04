@@ -1,26 +1,33 @@
 #include "MotorControl.h"
+#include "MazeNavigator.h"
 
-// This is a sample of the motor controller.
+
+// This is a sample of the motor contr  oller.
 
 
 void setup() {
     Serial.begin(9600);
 
-    // Init pins:
-    SetLeftPins(3, 7, 8);
-    SetRightPins(5, 11, 10);
+    // Init motor pins:
+    SetLeftPins(3, 6, 7);
+    SetRightPins(5, 8, 9);
 
-    // If required, you can invert the direction of one of the motors.
-    // e.g. if the right motor is going the wrong way:
-    InvertRight();
+    SetMotor(0, 0);
 
 
-
-
-    
 }
 
 void loop() {
-    // This is the code to go straight, stop, go backwards at half speed, stop, then do a right turn.
+    // go the first way through the maze
+    NavigateMaze(5,5,1,1, true, true);
 
+    // blink the LED
+
+    // go the first way through the maze
+    NavigateMaze(1,1,5,5, false, true);
+
+    // blink the LED
+
+
+    delay(10000);
 }

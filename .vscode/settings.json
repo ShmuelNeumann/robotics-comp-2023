@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "iostream": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "iterator": "cpp",
+        "vector": "cpp",
+        "format": "cpp",
+        "initializer_list": "cpp",
+        "ranges": "cpp",
+        "span": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp",
+        "ostream": "cpp"
+    }
+}
