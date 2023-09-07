@@ -8,7 +8,7 @@
 
 **Status:** Complete
 
-It was our submission for the Monash [Robotics Building Competition](https://www.facebook.com/events/798509565110988) (RBC). It is a program for a simple Arduino robot to navigate a maze using ultrasonic and colour sensors. We implemented a flood-fill inspired algorithm to dynamically store the known parts of the map and calculate the optimal route.
+This was our submission for the Monash [Robotics Building Competition](https://www.facebook.com/events/798509565110988) (RBC). It is a program for a simple Arduino robot to navigate a maze using ultrasonic and colour sensors. We implemented a flood-fill inspired algorithm to dynamically store the known parts of the map and calculate the optimal route.
 
 This project was completed in collaboration with Angel Aguinaldo, Daniel Dinh, and Domico Wibowo.
 
